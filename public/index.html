@@ -10,12 +10,13 @@
       box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
-      color: #111827;
-    }
+  body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f5;
+  color: #111827;
+  overflow-x: hidden; /* prevent whole page from scrolling sideways */
+}
 
     header {
       background: linear-gradient(135deg, #0f766e, #14b8a6);
@@ -122,6 +123,15 @@
     .btn-secondary:hover {
       background: #d1d5db;
     }
+/* Highlight the Fajr check-in button in orange */
+#checkin-btn {
+  background: #f97316;      /* orange */
+  color: white;
+}
+
+#checkin-btn:hover {
+  background: #ea580c;      /* slightly darker orange */
+}
 
     .two-column {
       display: grid;
@@ -147,14 +157,17 @@
       gap: 0.75rem;
     }
 
-    .leaderboard-table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+.leaderboard-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
 
-    .leaderboard-table-wrapper table {
-      min-width: 600px; /* ensures horizontal scroll on mobiles */
-    }
+/* Tables will be at least 650px wide so they scroll inside the wrapper,
+   but the wrapper itself never makes the whole page scroll */
+.leaderboard-table-wrapper table {
+  width: 100%;
+  min
 
     table {
       width: 100%;
@@ -325,7 +338,7 @@
           <input type="file" id="checkin-photo" accept="image/*" />
         </div>
         <div class="form-group">
-          <button type="submit">Check-in for today's Fajr</button>
+          <button type="submit" id="checkin-btn">Check-in for today's Fajr</button>
         </div>
       </form>
       <img id="checkin-photo-preview" class="checkin-photo-preview" style="display:none;" />
