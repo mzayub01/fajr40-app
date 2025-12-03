@@ -684,30 +684,6 @@ app.get(
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
-// TEMP: Make a specific parent admin on the live site (remove after use!)
-app.get("/make-admin-once", (req, res) => {
-  const email = "mzayub@gmail.com".toLowerCase().trim(); // <-- change this
-
-  db.run(
-    "UPDATE users SET isAdmin = 1 WHERE email = ?",
-    [email],
-    function (err) {
-      if (err) {
-        console.error("Error making admin:", err);
-        return res.status(500).json({ success: false, error: "DB error" });
-      }
-
-      res.json({
-        success: true,
-        updatedRows: this.changes,
-        message:
-          this.changes === 1
-            ? `Admin rights granted to ${email}`
-            : `No user found with email ${email}`,
-      });
-    }
-  );
-});
 
 app.listen(PORT, () => {
   console.log(`Fajr40 server running on port ${PORT}`);
