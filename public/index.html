@@ -5,140 +5,217 @@
   <title>Fajr 40 Challenge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      background: #0f172a;
-      color: #e5e7eb;
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
+    color: #222;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+
+  header p {
+    margin: 0.3rem 0 0;
+    font-size: 0.95rem;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 1rem auto 2rem;
+    padding: 0 1rem;
+  }
+
+  section {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  h2, h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .form-group {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  input,
+  select,
+  button {
+    width: 100%;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d4d4d4;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.2);
+  }
+
+  button {
+    background: #0f766e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  button:hover {
+    background: #115e59;
+  }
+
+  .btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+  }
+
+  .btn-secondary:hover {
+    background: #d1d5db;
+  }
+
+  .two-column {
+    display: grid;
+    grid-template-columns: 1.1fr 1.1fr;
+    gap: 1rem;
+  }
+
+  .message {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .message.success {
+    color: #16a34a;
+  }
+
+  .message.error {
+    color: #b91c1c;
+  }
+
+  .leaderboard-tables {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .leaderboard-table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    background: #f3f4f6;
+    font-weight: 600;
+  }
+
+  .tagline {
+    font-size: 0.85rem;
+    color: #e0f2f1;
+    margin-top: 0.25rem;
+  }
+
+  .sponsor-banner {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    background: rgba(15, 23, 42, 0.25);
+    padding: 0.4rem 0.6rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .checkin-photo-preview {
+    margin-top: 0.5rem;
+    max-width: 150px;
+    border-radius: 0.5rem;
+  }
+
+  .admin-warning {
+    font-size: 0.8rem;
+    color: #b91c1c;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .two-column {
+      grid-template-columns: 1fr;
     }
-    header {
-      background: #111827;
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #1f2937;
+  }
+
+  @media (max-width: 640px) {
+    header h1 {
+      font-size: 1.3rem;
     }
-    h1 {
-      margin: 0;
-      font-size: 1.4rem;
+
+    header p {
+      font-size: 0.85rem;
     }
+
     main {
-      max-width: 900px;
-      margin: 1.5rem auto;
-      padding: 0 1rem 3rem;
+      padding: 0 0.75rem;
     }
-    .card {
-      background: #111827;
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-      border: 1px solid #1f2937;
+
+    form {
+      flex-direction: column;
     }
-    .card h2 {
-      margin-top: 0;
-      font-size: 1.2rem;
-      margin-bottom: .5rem;
+
+    .form-group {
+      flex: 1 1 100%;
     }
-    label {
-      display: block;
-      margin: 0.4rem 0 0.15rem;
-      font-size: 0.9rem;
+
+    section {
+      padding: 0.9rem 0.9rem;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.45rem 0.55rem;
-      border-radius: 0.4rem;
-      border: 1px solid #374151;
-      background: #020617;
-      color: #e5e7eb;
-      box-sizing: border-box;
-    }
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
+
     button {
-      padding: 0.5rem 0.8rem;
-      border-radius: 0.4rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      margin-right: 0.3rem;
-    }
-    .btn-primary {
-      background: #22c55e;
-      color: #022c22;
-    }
-    .btn-secondary {
-      background: #1f2937;
-      color: #e5e7eb;
-    }
-    .btn-danger {
-      background: #ef4444;
-      color: #fee2e2;
-    }
-    .row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .col {
-      flex: 1 1 240px;
-    }
-    .hidden {
-      display: none;
-    }
-    .error {
-      color: #fca5a5;
-      font-size: 0.9rem;
-      margin-top: 0.4rem;
-    }
-    .success {
-      color: #bbf7d0;
-      font-size: 0.9rem;
-      margin-top: 0.4rem;
-    }
-    table {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
     }
-    th, td {
-      padding: 0.35rem 0.4rem;
-      border-bottom: 1px solid #1f2937;
-    }
-    th {
-      text-align: left;
-      background: #020617;
-    }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      object-fit: cover;
-      border: 1px solid #1f2937;
-    }
-    .evidence-thumb {
-      width: 70px;
-      height: 70px;
-      object-fit: cover;
-      border-radius: 0.5rem;
-      border: 1px solid #1f2937;
-    }
-    .tag {
-      display: inline-block;
-      padding: 0.15rem 0.45rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: #0f766e;
-      color: #ccfbf1;
-    }
-    small {
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 <header>
