@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fajr 40 Challenge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    header {
+      background: #111827;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    main {
+      max-width: 900px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+    .card {
+      background: #111827;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid #1f2937;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      margin-bottom: .5rem;
+    }
+    label {
+      display: block;
+      margin: 0.4rem 0 0.15rem;
+      font-size: 0.9rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 0.4rem;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    button {
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.4rem;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 0.3rem;
+    }
+    .btn-primary {
+      background: #22c55e;
+      color: #022c22;
+    }
+    .btn-secondary {
+      background: #1f2937;
+      color: #e5e7eb;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+    .row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .col {
+      flex: 1 1 240px;
+    }
+    .hidden {
+      display: none;
+    }
+    .error {
+      color: #fca5a5;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+    .success {
+      color: #bbf7d0;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid #1f2937;
+    }
+    th {
+      text-align: left;
+      background: #020617;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid #1f2937;
+    }
+    .evidence-thumb {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 1px solid #1f2937;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #0f766e;
+      color: #ccfbf1;
+    }
+    small {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Fajr 40 Challenge</h1>
+    <small>Pray Fajr in the masjid for 40 days 🌙</small>
+  </div>
+  <div id="header-user">
+    <button class="btn-secondary" id="btn-logout" style="display:none;">Logout</button>
+  </div>
+</header>
+<main>
+  <!-- Auth card -->
+  <section id="auth-section" class="card">
+    <h2>Parent Registration / Login</h2>
+    <div class="row">
+      <div class="col">
+        <h3>Register your child</h3>
+        <label for="reg-parent-name">Parent name</label>
+        <input id="reg-parent-name" type="text" />
+
+        <label for="reg-child-name">Child name (participant)</label>
+        <input id="reg-child-name" type="text" />
+
+        <label for="reg-email">Parent email (login)</label>
+        <input id="reg-email" type="email" />
+
+        <label for="reg-password">Password</label>
+        <input id="reg-password" type="password" />
+
+        <label for="reg-masjid">Masjid</label>
+        <input id="reg-masjid" type="text" />
+
+        <label for="reg-city">City</label>
+        <input id="reg-city" type="text" />
+
+        <label for="reg-age">Child age (3–17)</label>
+        <input id="reg-age" type="number" min="3" max="17" />
+
+        <button class="btn-primary" id="btn-register">Register</button>
+        <div id="reg-message"></div>
+      </div>
+      <div class="col">
+        <h3>Parent login</h3>
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" />
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" />
+        <button class="btn-primary" id="btn-login">Login</button>
+        <div id="login-message"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard-section" class="card hidden">
+    <h2>Your Child's Fajr 40 Dashboard</h2>
+    <p id="welcome-text"></p>
+    <div class="row">
+      <div class="col">
+        <h3>Today's Check-in</h3>
+        <p>After your child has prayed Fajr in the masjid, upload a quick photo as evidence and then check in.</p>
+        <label for="checkin-photo">Upload Fajr photo (required)</label>
+        <input type="file" id="checkin-photo" accept="image/*" />
+        <br /><br />
+        <button class="btn-primary" id="btn-checkin">My child prayed Fajr in the masjid today</button>
+        <div id="checkin-message"></div>
+        <p><small>Note: If a day is missed before reaching 40, the streak restarts from 0.</small></p>
+      </div>
+      <div class="col">
+        <h3>Child's Progress</h3>
+        <p><strong>Current streak:</strong> <span id="stat-current">0</span> days</p>
+        <p><strong>Best streak:</strong> <span id="stat-best">0</span> days</p>
+        <p><strong>40-day completions:</strong> <span id="stat-completions">0</span></p>
+        <p><strong>Last check-in:</strong> <span id="stat-last">-</span></p>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col">
+        <h3>Profile Photo</h3>
+        <input type="file" id="photo-input" accept="image/*" />
+        <button class="btn-secondary" id="btn-upload-photo">Upload</button>
+        <div id="photo-message"></div>
+      </div>
+      <div class="col">
+        <img id="profile-photo" class="avatar" src="" alt="Profile photo" style="display:none;" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Leaderboard -->
+  <section class="card">
+    <h2>Leaderboard (Global)</h2>
+    <p><small>Sorted by completions, current streak, then best streak.</small></p>
+    <table>
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Child</th>
+        <th>Masjid</th>
+        <th>City</th>
+        <th>Current</th>
+        <th>Best</th>
+        <th>40s</th>
+      </tr>
+      </thead>
+      <tbody id="leaderboard-body"></tbody>
+    </table>
+  </section>
+
+  <!-- Masjid & Age Group Leaderboards -->
+  <section class="card">
+    <h2>Masjid & Age Group Leaderboards</h2>
+    <p><small>Filter by specific masjid and age band to see local rankings for children.</small></p>
+    <div class="row">
+      <div class="col">
+        <label for="filter-masjid">Masjid</label>
+        <select id="filter-masjid">
+          <option value="">All masajid</option>
+        </select>
+      </div>
+      <div class="col">
+        <label for="filter-age-group">Age Group</label>
+        <select id="filter-age-group">
+          <option value="">All ages</option>
+          <option value="7-10">7–10</option>
+          <option value="11-14">11–14</option>
+          <option value="15-18">15–18</option>
+          <option value="18+">18+</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:0.75rem;">
+      <table>
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Child</th>
+          <th>Masjid</th>
+          <th>City</th>
+          <th>Age</th>
+          <th>Age Group</th>
+          <th>Current</th>
+          <th>Best</th>
+          <th>40s</th>
+        </tr>
+        </thead>
+        <tbody id="masjid-leaderboard-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Hall of Fame – Completed 40 Days</h2>
+    <div id="hof-container"></div>
+  </section>
+
+  <!-- Sponsor section -->
+  <section class="card">
+    <h2>Sponsor the Fajr 40 Challenge</h2>
+    <p>
+      Local businesses can sponsor prizes for children who complete the challenge.
+      JazakumAllahu khairan for supporting and encouraging the youth.
+    </p>
+    <div class="row">
+      <div class="col">
+        <label for="sponsor-business-name">Business name</label>
+        <input id="sponsor-business-name" type="text" />
+
+        <label for="sponsor-email">Contact email (optional)</label>
+        <input id="sponsor-email" type="email" />
+
+        <label for="sponsor-phone">Contact phone (optional)</label>
+        <input id="sponsor-phone" type="text" />
+
+        <label for="sponsor-prize">Prize offered for each child who completes Fajr 40</label>
+        <textarea id="sponsor-prize" placeholder="e.g. £10 voucher, free meal, sports kit, book set, etc."></textarea>
+
+        <button class="btn-primary" id="btn-submit-sponsor">Submit sponsorship</button>
+        <div id="sponsor-message"></div>
+      </div>
+    </div>
+    <hr />
+    <h3>Our Sponsors</h3>
+    <div id="sponsor-list"></div>
+  </section>
+
+  <!-- Admin area -->
+  <section id="admin-section" class="card hidden">
+    <h2>Admin Dashboard</h2>
+
+    <button class="btn-secondary" id="btn-export-completers" style="margin-bottom:0.75rem;">
+      Download 40-day completers CSV
+    </button>
+
+    <h3>Participants</h3>
+    <p><small>Viewing all registered children (parent details visible only here).</small></p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Child Name</th>
+          <th>Parent Name</th>
+          <th>Parent Email</th>
+          <th>Masjid</th>
+          <th>City</th>
+          <th>Age</th>
+          <th>Current</th>
+          <th>Best</th>
+          <th>40s</th>
+          <th>Last Check-in</th>
+          <th>Joined</th>
+        </tr>
+        </thead>
+        <tbody id="admin-users-body"></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">Sponsor Offers</h3>
+    <p><small>Businesses who have pledged prizes for Fajr 40 completers.</small></p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Business</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Prize</th>
+          <th>Submitted</th>
+          <th>Approved</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="admin-sponsors-body"></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">Check-in Photo Evidence</h3>
+    <p><small>Select a participant to review their Fajr photo check-ins or view all recent evidence.</small></p>
+    <div class="row">
+      <div class="col">
+        <label for="admin-checkin-user-select">Participant</label>
+        <select id="admin-checkin-user-select">
+          <option value="">All participants</option>
+        </select>
+      </div>
+      <div class="col" style="display:flex;align-items:flex-end;">
+        <button class="btn-secondary" id="btn-admin-load-checkins">Load photos</button>
+      </div>
+    </div>
+    <div id="admin-checkins-container" style="margin-top:1rem;"></div>
+  </section>
+</main>
+
+<script>
+  const API_BASE = "";
+
+  let authToken = localStorage.getItem("fajr40_token") || null;
+  let currentUser = null;
+  let fullLeaderboardData = [];
+
+  const authSection = document.getElementById("auth-section");
+  const dashboardSection = document.getElementById("dashboard-section");
+  const adminSection = document.getElementById("admin-section");
+  const btnLogout = document.getElementById("btn-logout");
+
+  function setMessage(el, msg, type = "success") {
+    el.innerHTML = "";
+    if (!msg) return;
+    const div = document.createElement("div");
+    div.className = type === "error" ? "error" : "success";
+    div.textContent = msg;
+    el.appendChild(div);
+  }
+
+  function api(path, options = {}) {
+    const headers = options.headers || {};
+    const fullHeaders = { ...headers };
+
+    if (!(options.body instanceof FormData)) {
+      fullHeaders["Content-Type"] = "application/json";
+    }
+
+    if (authToken) {
+      fullHeaders["Authorization"] = "Bearer " + authToken;
+    }
+
+    return fetch(API_BASE + path, {
+      ...options,
+      headers: fullHeaders,
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const errMsg = data.error || "Request failed";
+        throw new Error(errMsg);
+      }
+      return data;
+    });
+  }
+
+  function getAgeGroup(age) {
+    if (age == null || isNaN(age)) return "";
+    const a = Number(age);
+    if (a >= 7 && a <= 10) return "7-10";
+    if (a >= 11 && a <= 14) return "11-14";
+    if (a >= 15 && a <= 18) return "15-18";
+    if (a > 18) return "18+";
+    return "";
+  }
+
+  function updateUI() {
+    if (authToken && currentUser) {
+      authSection.classList.add("hidden");
+      dashboardSection.classList.remove("hidden");
+      document.getElementById("welcome-text").textContent =
+        "Assalamu alaikum, you are managing Fajr 40 for: " +
+        currentUser.name +
+        (currentUser.masjid ? " at " + currentUser.masjid : "") +
+        (currentUser.city ? " (" + currentUser.city + ")" : "");
+      btnLogout.style.display = "inline-block";
+      if (currentUser.isAdmin) {
+        adminSection.classList.remove("hidden");
+        loadAdminUsers();
+        loadAdminSponsors();
+        loadAdminCheckins(null);
+      } else {
+        adminSection.classList.add("hidden");
+      }
+    } else {
+      authSection.classList.remove("hidden");
+      dashboardSection.classList.add("hidden");
+      adminSection.classList.add("hidden");
+      btnLogout.style.display = "none";
+    }
+  }
+
+  function loadMe() {
+    if (!authToken) return;
+    api("/api/me")
+      .then((user) => {
+        currentUser = user;
+        document.getElementById("stat-current").textContent = user.currentStreak || 0;
+        document.getElementById("stat-best").textContent = user.bestStreak || 0;
+        document.getElementById("stat-completions").textContent = user.completionsCount || 0;
+        document.getElementById("stat-last").textContent = user.lastCheckinDate || "-";
+
+        if (user.photoFilename) {
+          const img = document.getElementById("profile-photo");
+          img.src = "/uploads/" + user.photoFilename;
+          img.style.display = "inline-block";
+        }
+
+        updateUI();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  function loadLeaderboard() {
+    fetch("/api/leaderboard")
+      .then((res) => res.json())
+      .then((rows) => {
+        const tbody = document.getElementById("leaderboard-body");
+        tbody.innerHTML = "";
+        rows.forEach((u, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.4rem;">
+                ${u.photoFilename ? `<img class="avatar" src="/uploads/${u.photoFilename}" />` : ""}
+                <div>
+                  <div>${u.name}</div>
+                  ${u.completionsCount > 0 ? `<span class="tag">Completed x${u.completionsCount}</span>` : ""}
+                </div>
+              </div>
+            </td>
+            <td>${u.masjid || "-"}</td>
+            <td>${u.city || "-"}</td>
+            <td>${u.currentStreak}</td>
+            <td>${u.bestStreak}</td>
+            <td>${u.completionsCount}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function loadLeaderboardFull() {
+    fetch("/api/leaderboard-full")
+      .then((res) => res.json())
+      .then((rows) => {
+        fullLeaderboardData = rows || [];
+        populateMasjidFilter(fullLeaderboardData);
+        renderMasjidAgeLeaderboard();
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function populateMasjidFilter(data) {
+    const select = document.getElementById("filter-masjid");
+    if (!select) return;
+    const seen = new Set();
+    data.forEach((u) => {
+      if (u.masjid && !seen.has(u.masjid)) {
+        seen.add(u.masjid);
+      }
+    });
+    const values = Array.from(seen).sort((a, b) => a.localeCompare(b));
+    select.innerHTML = '<option value="">All masajid</option>';
+    values.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderMasjidAgeLeaderboard() {
+    const tbody = document.getElementById("masjid-leaderboard-body");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    let masjidFilter = document.getElementById("filter-masjid").value;
+    let ageGroupFilter = document.getElementById("filter-age-group").value;
+
+    let filtered = fullLeaderboardData.slice();
+
+    if (masjidFilter) {
+      filtered = filtered.filter((u) => u.masjid === masjidFilter);
+    }
+
+    if (ageGroupFilter) {
+      filtered = filtered.filter((u) => {
+        const grp = getAgeGroup(u.age);
+        return grp === ageGroupFilter;
+      });
+    }
+
+    filtered.sort((a, b) => {
+      if (b.completionsCount !== a.completionsCount) {
+        return b.completionsCount - a.completionsCount;
+      }
+      if (b.currentStreak !== a.currentStreak) {
+        return b.currentStreak - a.currentStreak;
+      }
+      if (b.bestStreak !== a.bestStreak) {
+        return b.bestStreak - a.bestStreak;
+      }
+      return String(a.name).localeCompare(String(b.name));
+    });
+
+    if (!filtered.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="9">No participants found for this selection yet.</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    filtered.forEach((u, idx) => {
+      const grp = getAgeGroup(u.age);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${u.name}</td>
+        <td>${u.masjid || "-"}</td>
+        <td>${u.city || "-"}</td>
+        <td>${u.age != null ? u.age : "-"}</td>
+        <td>${grp || "-"}</td>
+        <td>${u.currentStreak}</td>
+        <td>${u.bestStreak}</td>
+        <td>${u.completionsCount}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function loadHOF() {
+    fetch("/api/hall-of-fame")
+      .then((res) => res.json())
+      .then((rows) => {
+        const container = document.getElementById("hof-container");
+        container.innerHTML = "";
+        if (!rows.length) {
+          container.innerHTML = "<p>No one has completed 40 days yet. Will your child be the first inshaAllah?</p>";
+          return;
+        }
+        rows.forEach((u) => {
+          const grp = getAgeGroup(u.age);
+          const div = document.createElement("div");
+          div.style.marginBottom = "0.6rem";
+          div.innerHTML = `
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              ${u.photoFilename ? `<img class="avatar" src="/uploads/${u.photoFilename}" />` : ""}
+              <div>
+                <div><strong>${u.name}</strong>${u.masjid ? " – " + u.masjid : ""}${u.city ? " (" + u.city + ")" : ""}</div>
+                <div><small>40-day completions: ${u.completionsCount}, best streak: ${u.bestStreak}${
+                  grp ? " | Age group: " + grp : ""
+                }</small></div>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function loadSponsors() {
+    fetch("/api/sponsors")
+      .then((res) => res.json())
+      .then((rows) => {
+        const container = document.getElementById("sponsor-list");
+        container.innerHTML = "";
+        if (!rows.length) {
+          container.innerHTML = "<p>No sponsors yet. Your business could be the first to support Fajr 40.</p>";
+          return;
+        }
+        rows.forEach((s) => {
+          const div = document.createElement("div");
+          div.style.marginBottom = "0.8rem";
+          div.innerHTML = `
+            <div><strong>${s.businessName}</strong></div>
+            <div><small>Prize: ${s.prizeDescription}</small></div>
+            ${
+              s.contactEmail || s.contactPhone
+                ? `<div><small>Contact: ${
+                    s.contactEmail ? s.contactEmail : ""
+                  } ${s.contactPhone ? " | " + s.contactPhone : ""}</small></div>`
+                : ""
+            }
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function loadAdminUsers() {
+    api("/api/admin/users")
+      .then((rows) => {
+        const tbody = document.getElementById("admin-users-body");
+        const select = document.getElementById("admin-checkin-user-select");
+        tbody.innerHTML = "";
+        if (select) {
+          select.innerHTML = '<option value="">All participants</option>';
+        }
+
+        rows.forEach((u) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${u.id}</td>
+            <td>${u.name}</td>
+            <td>${u.parentName || "-"}</td>
+            <td>${u.email}</td>
+            <td>${u.masjid || "-"}</td>
+            <td>${u.city || "-"}</td>
+            <td>${u.age != null ? u.age : "-"}</td>
+            <td>${u.currentStreak}</td>
+            <td>${u.bestStreak}</td>
+            <td>${u.completionsCount}</td>
+            <td>${u.lastCheckinDate || "-"}</td>
+            <td>${u.createdAt}</td>
+          `;
+          tbody.appendChild(tr);
+
+          if (select) {
+            const opt = document.createElement("option");
+            opt.value = u.id;
+            opt.textContent =
+              u.name +
+              (u.masjid ? " (" + u.masjid + ")" : "") +
+              (u.city ? " - " + u.city : "");
+            select.appendChild(opt);
+          }
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function loadAdminSponsors() {
+    api("/api/admin/sponsors")
+      .then((rows) => {
+        const tbody = document.getElementById("admin-sponsors-body");
+        tbody.innerHTML = "";
+        rows.forEach((s) => {
+          const tr = document.createElement("tr");
+          const approvedLabel = s.approved ? "Yes" : "No";
+          const actionButton = s.approved
+            ? ""
+            : `<button class="btn-secondary btn-approve-sponsor" data-id="${s.id}">Approve</button>`;
+
+          tr.innerHTML = `
+            <td>${s.id}</td>
+            <td>${s.businessName}</td>
+            <td>${s.contactEmail || "-"}</td>
+            <td>${s.contactPhone || "-"}</td>
+            <td>${s.prizeDescription}</td>
+            <td>${s.createdAt}</td>
+            <td>${approvedLabel}</td>
+            <td>${actionButton}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-approve-sponsor").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-id");
+            approveSponsor(id);
+          });
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  function approveSponsor(id) {
+    if (!id) return;
+    api(`/api/admin/sponsors/${encodeURIComponent(id)}/approve`, {
+      method: "POST",
+    })
+      .then(() => {
+        loadAdminSponsors();
+        loadSponsors();
+      })
+      .catch((err) => {
+        alert("Error approving sponsor: " + err.message);
+      });
+  }
+
+  function loadAdminCheckins(userId) {
+    let path = "/api/admin/checkin-photos";
+    if (userId) {
+      path += "?userId=" + encodeURIComponent(userId);
+    }
+
+    api(path)
+      .then((rows) => {
+        const container = document.getElementById("admin-checkins-container");
+        container.innerHTML = "";
+
+        if (!rows.length) {
+          container.innerHTML = "<p>No photo evidence found for this selection.</p>";
+          return;
+        }
+
+        rows.forEach((c) => {
+          const div = document.createElement("div");
+          div.style.marginBottom = "0.8rem";
+          div.innerHTML = `
+            <div style="display:flex;gap:0.6rem;align-items:center;">
+              <img class="evidence-thumb" src="/uploads/${c.photoFilename}" alt="Fajr photo" />
+              <div>
+                <div><strong>${c.name}</strong>${c.masjid ? " – " + c.masjid : ""}</div>
+                <div><small>Date: ${c.date}</small></div>
+                <div><small>Uploaded: ${c.createdAt}</small></div>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        const container = document.getElementById("admin-checkins-container");
+        container.innerHTML = "<p class='error'>Error loading check-in photos.</p>";
+      });
+  }
+
+  // ---- Event handlers ----
+
+  document.getElementById("btn-register").addEventListener("click", () => {
+    const parentName = document.getElementById("reg-parent-name").value.trim();
+    const childName = document.getElementById("reg-child-name").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const masjid = document.getElementById("reg-masjid").value.trim();
+    const city = document.getElementById("reg-city").value.trim();
+    const ageVal = document.getElementById("reg-age").value.trim();
+    const msgEl = document.getElementById("reg-message");
+
+    if (!parentName || !childName || !email || !password || !masjid || !city || !ageVal) {
+      setMessage(msgEl, "All fields are required.", "error");
+      return;
+    }
+
+    const ageNum = parseInt(ageVal, 10);
+    if (isNaN(ageNum) || ageNum < 3 || ageNum > 17) {
+      setMessage(msgEl, "Age must be between 3 and 17 years.", "error");
+      return;
+    }
+
+    api("/api/register", {
+      method: "POST",
+      body: JSON.stringify({
+        parentName,
+        childName,
+        email,
+        password,
+        masjid,
+        city,
+        age: ageVal,
+      }),
+    })
+      .then(() => {
+        setMessage(msgEl, "Registered successfully. You can now log in.");
+      })
+      .catch((err) => {
+        setMessage(msgEl, err.message, "error");
+      });
+  });
+
+  document.getElementById("btn-login").addEventListener("click", () => {
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    const msgEl = document.getElementById("login-message");
+
+    api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    })
+      .then((data) => {
+        authToken = data.token;
+        localStorage.setItem("fajr40_token", authToken);
+        currentUser = data.user;
+        setMessage(msgEl, "");
+        loadMe();
+      })
+      .catch((err) => {
+        setMessage(msgEl, err.message, "error");
+      });
+  });
+
+  document.getElementById("btn-checkin").addEventListener("click", () => {
+    const msgEl = document.getElementById("checkin-message");
+    const fileInput = document.getElementById("checkin-photo");
+    const file = fileInput.files[0];
+
+    if (!file) {
+      setMessage(msgEl, "Please upload a Fajr photo before checking in.", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    fetch("/api/checkin-photo", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + authToken,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setMessage(msgEl, data.message || "Check-in saved.");
+        fileInput.value = "";
+        loadMe();
+        loadLeaderboard();
+        loadLeaderboardFull();
+        loadHOF();
+      })
+      .catch((err) => {
+        setMessage(msgEl, err.message, "error");
+      });
+  });
+
+  document.getElementById("btn-upload-photo").addEventListener("click", () => {
+    const input = document.getElementById("photo-input");
+    const msgEl = document.getElementById("photo-message");
+    const file = input.files[0];
+    if (!file) {
+      setMessage(msgEl, "Please choose a file first.", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    fetch("/api/upload-photo", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + authToken,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setMessage(msgEl, "Photo uploaded.");
+        const img = document.getElementById("profile-photo");
+        img.src = "/uploads/" + data.filename + "?t=" + Date.now();
+        img.style.display = "inline-block";
+        loadLeaderboard();
+        loadLeaderboardFull();
+        loadHOF();
+      })
+      .catch((err) => {
+        setMessage(msgEl, err.message, "error");
+      });
+  });
+
+  document.getElementById("btn-submit-sponsor").addEventListener("click", () => {
+    const businessName = document.getElementById("sponsor-business-name").value.trim();
+    const contactEmail = document.getElementById("sponsor-email").value.trim();
+    const contactPhone = document.getElementById("sponsor-phone").value.trim();
+    const prizeDescription = document.getElementById("sponsor-prize").value.trim();
+    const msgEl = document.getElementById("sponsor-message");
+
+    if (!businessName || !prizeDescription) {
+      setMessage(msgEl, "Please enter your business name and prize description.", "error");
+      return;
+    }
+
+    api("/api/sponsors", {
+      method: "POST",
+      body: JSON.stringify({ businessName, contactEmail, contactPhone, prizeDescription }),
+    })
+      .then(() => {
+        setMessage(msgEl, "JazakAllah khair! Your sponsorship offer has been submitted.");
+        document.getElementById("sponsor-business-name").value = "";
+        document.getElementById("sponsor-email").value = "";
+        document.getElementById("sponsor-phone").value = "";
+        document.getElementById("sponsor-prize").value = "";
+        loadSponsors();
+      })
+      .catch((err) => {
+        setMessage(msgEl, err.message, "error");
+      });
+  });
+
+  const btnAdminLoadCheckins = document.getElementById("btn-admin-load-checkins");
+  if (btnAdminLoadCheckins) {
+    btnAdminLoadCheckins.addEventListener("click", () => {
+      const select = document.getElementById("admin-checkin-user-select");
+      const userId = select.value || null;
+      loadAdminCheckins(userId);
+    });
+  }
+
+  const btnExportCompleters = document.getElementById("btn-export-completers");
+  if (btnExportCompleters) {
+    btnExportCompleters.addEventListener("click", () => {
+      if (!authToken) {
+        alert("Please log in as admin first.");
+        return;
+      }
+
+      fetch("/api/admin/export-completers", {
+        headers: {
+          Authorization: "Bearer " + authToken,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to download CSV");
+          return res.text();
+        })
+        .then((csvText) => {
+          const blob = new Blob([csvText], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "fajr40-completers.csv";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        })
+        .catch((err) => {
+          alert("Error downloading CSV: " + err.message);
+        });
+    });
+  }
+
+  const filterMasjid = document.getElementById("filter-masjid");
+  const filterAgeGroup = document.getElementById("filter-age-group");
+  if (filterMasjid) {
+    filterMasjid.addEventListener("change", renderMasjidAgeLeaderboard);
+  }
+  if (filterAgeGroup) {
+    filterAgeGroup.addEventListener("change", renderMasjidAgeLeaderboard);
+  }
+
+  btnLogout.addEventListener("click", () => {
+    authToken = null;
+    currentUser = null;
+    localStorage.removeItem("fajr40_token");
+    updateUI();
+  });
+
+  if (authToken) {
+    loadMe();
+  }
+  updateUI();
+  loadLeaderboard();
+  loadLeaderboardFull();
+  loadHOF();
+  loadSponsors();
+</script>
+</body>
+</html>
