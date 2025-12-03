@@ -1,0 +1,4 @@
+node_modules/
+uploads/
+fajr40.db
+.env
