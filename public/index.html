@@ -343,7 +343,7 @@
       </p>
       <form id="sponsor-form">
         <div class="form-group">
-          <label for="sponsorName">Sponsor Name / Business</label>
+          <label for="sponsorName">Business / Sponsor Name</label>
           <input type="text" id="sponsorName" required />
         </div>
         <div class="form-group">
@@ -351,8 +351,8 @@
           <input type="email" id="sponsorEmail" required />
         </div>
         <div class="form-group">
-          <label for="sponsorCity">City / Area</label>
-          <input type="text" id="sponsorCity" required />
+          <label for="sponsorPhone">Contact Phone</label>
+          <input type="text" id="sponsorPhone" />
         </div>
         <div class="form-group">
           <label for="sponsorPrize">Prize details (e.g. voucher, gift, experience)</label>
@@ -384,7 +384,7 @@
                   <th>Masjid</th>
                   <th>Current Streak</th>
                   <th>Best Streak</th>
-                  <th>Days Completed</th>
+                  <th>40-day Completions</th>
                 </tr>
               </thead>
               <tbody id="global-leaderboard-body">
@@ -411,6 +411,7 @@
                   <th>City</th>
                   <th>Current Streak</th>
                   <th>Best Streak</th>
+                  <th>40-day Completions</th>
                 </tr>
               </thead>
               <tbody id="masjid-leaderboard-body">
@@ -429,8 +430,8 @@
                 <tr>
                   <th>Age Group</th>
                   <th>Total Participants</th>
-                  <th>Avg Streak</th>
-                  <th>Completions</th>
+                  <th>Avg Current Streak</th>
+                  <th>Total 40-day Completions</th>
                 </tr>
               </thead>
               <tbody id="age-leaderboard-body">
@@ -463,7 +464,7 @@
               <th>Parent Email</th>
               <th>Current Streak</th>
               <th>Best Streak</th>
-              <th>Days Completed</th>
+              <th>40-day Completions</th>
             </tr>
           </thead>
           <tbody id="admin-participants-body">
@@ -478,11 +479,11 @@
         <table>
           <thead>
             <tr>
-              <th>Sponsor</th>
+              <th>Business</th>
               <th>Email</th>
-              <th>City</th>
+              <th>Phone</th>
               <th>Prize</th>
-              <th>Status</th>
+              <th>Approved</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -549,6 +550,8 @@
     const adminSponsorsBody = document.getElementById("admin-sponsors-body");
     const adminPhotosBody = document.getElementById("admin-photos-body");
     const exportCompletionsBtn = document.getElementById("export-completions-btn");
+
+    let fullLeaderboardCache = [];
 
     const API_HEADERS = () => {
       const token = localStorage.getItem("token");
@@ -632,6 +635,55 @@
       }
     });
 
+    // Fetch profile (/api/me) and update dashboard + admin visibility
+    async function loadProfile() {
+      const headers = API_HEADERS();
+      if (!headers.Authorization) return null;
+
+      try {
+        const res = await fetch("/api/me", { headers });
+        if (!res.ok) {
+          return null;
+        }
+        const user = await res.json();
+
+        // Save isAdmin for later
+        localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+
+        // Show dashboard
+        authSection.style.display = "none";
+        dashboardSection.style.display = "block";
+
+        // Fill texts
+        const childName = user.name || "your child";
+        const ageText = user.age ? ` (age ${user.age})` : "";
+        const city = user.city || "";
+        const masjid = user.masjid || "";
+
+        welcomeText.textContent =
+          `Logged in as parent of ${childName}${ageText}` +
+          `${city || masjid ? " – " : ""}` +
+          `${city}${city && masjid ? " · " : ""}${masjid}`;
+
+        streakText.textContent = `Current streak: ${user.currentStreak ?? 0} days`;
+        extraStats.textContent =
+          `Best streak: ${user.bestStreak ?? 0} · 40-day completions: ${user.completionsCount ?? 0}`;
+
+        // Admin?
+        if (user.isAdmin && adminSection) {
+          adminSection.style.display = "block";
+          await loadAdminData();
+        } else if (adminSection) {
+          adminSection.style.display = "none";
+        }
+
+        return user;
+      } catch (err) {
+        console.error("Error loading profile:", err);
+        return null;
+      }
+    }
+
     // Login
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -650,39 +702,19 @@
         });
 
         const data = await res.json();
-        if (!res.ok || !data.token) {
+        if (!res.ok || !data.token || !data.user) {
           setMessage(loginMessage, data.error || "Invalid credentials.", "error");
           return;
         }
 
-        // Store auth info
+        // Store token
         localStorage.setItem("token", data.token);
-        localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
 
-        authSection.style.display = "none";
-        dashboardSection.style.display = "block";
+        // Immediately load profile & stats
+        await loadProfile();
 
-        if (data.isAdmin && adminSection) {
-          adminSection.style.display = "block";
-        } else if (adminSection) {
-          adminSection.style.display = "none";
-        }
-
-        // Populate dashboard text if provided
-        const childName = data.childName || "your child";
-        const city = data.city || "";
-        const masjid = data.masjid || "";
-        const age = data.age ? ` (age ${data.age})` : "";
-
-        welcomeText.textContent = `Logged in as parent of ${childName}${age}${city || masjid ? " – " : ""}${city}${city && masjid ? " · " : ""}${masjid}`;
-        streakText.textContent = `Current streak: ${data.currentStreak ?? data.streak ?? 0} days`;
-        extraStats.textContent = `Best streak: ${data.bestStreak ?? 0} · Total check-ins: ${data.totalCheckins ?? 0}`;
-
-        // After login, load leaderboards & admin data if needed
-        loadLeaderboards();
-        if (data.isAdmin) {
-          loadAdminData();
-        }
+        // After login, load leaderboards
+        await loadLeaderboards();
 
         setMessage(loginMessage, "Login successful.", "success");
       } catch (err) {
@@ -691,7 +723,7 @@
       }
     });
 
-    // Check-in
+    // Check-in (with or without photo)
     checkinForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setMessage(checkinMessage, "", "");
@@ -702,40 +734,49 @@
         return;
       }
 
-      const formData = new FormData();
       const file = checkinPhotoInput.files[0];
-      if (file) {
-        formData.append("photo", file);
-      }
+      let res, data;
 
       try {
-        const res = await fetch("/api/checkin", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token
-          },
-          body: formData
-        });
+        if (file) {
+          // Use photo endpoint
+          const formData = new FormData();
+          formData.append("photo", file);
 
-        const data = await res.json();
+          res = await fetch("/api/checkin-photo", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token
+            },
+            body: formData
+          });
+        } else {
+          // Use normal checkin (no photo)
+          res = await fetch("/api/checkin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token
+            },
+            body: JSON.stringify({})
+          });
+        }
+
+        data = await res.json();
         if (!res.ok) {
           setMessage(checkinMessage, data.error || "Check-in failed.", "error");
           return;
         }
 
-        setMessage(checkinMessage, "Fajr check-in recorded! MashaAllah.", "success");
-        // Update streak info if returned
-        if (data.currentStreak !== undefined) {
-          streakText.textContent = `Current streak: ${data.currentStreak} days`;
-        }
-        if (data.bestStreak !== undefined || data.totalCheckins !== undefined) {
-          extraStats.textContent = `Best streak: ${data.bestStreak ?? 0} · Total check-ins: ${data.totalCheckins ?? 0}`;
-        }
+        setMessage(checkinMessage, data.message || "Fajr check-in recorded! MashaAllah.", "success");
+
+        // Reload profile so streaks are accurate
+        await loadProfile();
 
         // Refresh leaderboards & admin view
-        loadLeaderboards();
+        await loadLeaderboards();
         if (localStorage.getItem("isAdmin") === "true") {
-          loadAdminData();
+          await loadAdminData();
         }
       } catch (err) {
         console.error(err);
@@ -750,8 +791,13 @@
 
       const sponsorName = document.getElementById("sponsorName").value.trim();
       const sponsorEmail = document.getElementById("sponsorEmail").value.trim();
-      const sponsorCity = document.getElementById("sponsorCity").value.trim();
+      const sponsorPhone = document.getElementById("sponsorPhone").value.trim();
       const sponsorPrize = document.getElementById("sponsorPrize").value.trim();
+
+      const businessName = sponsorName;
+      const contactEmail = sponsorEmail;
+      const contactPhone = sponsorPhone || null;
+      const prizeDescription = sponsorPrize;
 
       try {
         const res = await fetch("/api/sponsors", {
@@ -759,7 +805,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ sponsorName, sponsorEmail, sponsorCity, sponsorPrize })
+          body: JSON.stringify({ businessName, contactEmail, contactPhone, prizeDescription })
         });
 
         const data = await res.json();
@@ -776,80 +822,112 @@
       }
     });
 
-    // Load leaderboards
+    // Load leaderboards using /api/leaderboard and /api/leaderboard-full
     async function loadLeaderboards() {
       try {
-        // Global
-        const globalRes = await fetch("/api/leaderboard/global");
+        // Global (top 100)
+        const globalRes = await fetch("/api/leaderboard");
         const globalData = await globalRes.json();
         globalLeaderboardBody.innerHTML = "";
         (globalData || []).forEach((row, idx) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${idx + 1}</td>
-            <td>${row.childName || ""}</td>
+            <td>${row.name || ""}</td>
             <td>${row.city || ""}</td>
             <td>${row.masjid || ""}</td>
-            <td>${row.currentStreak ?? row.streak ?? 0}</td>
+            <td>${row.currentStreak ?? 0}</td>
             <td>${row.bestStreak ?? 0}</td>
-            <td>${row.daysCompleted ?? 0}</td>
+            <td>${row.completionsCount ?? 0}</td>
           `;
           globalLeaderboardBody.appendChild(tr);
         });
 
-        // Masjid
-        const masjidRes = await fetch("/api/leaderboard/masjid");
-        const masjidData = await masjidRes.json();
-        renderMasjidLeaderboard(masjidData || []);
-
-        // Age
-        const ageRes = await fetch("/api/leaderboard/age-groups");
-        const ageData = await ageRes.json();
-        ageLeaderboardBody.innerHTML = "";
-        (ageData || []).forEach((row) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${row.ageGroup || ""}</td>
-            <td>${row.totalParticipants ?? 0}</td>
-            <td>${row.avgStreak ?? 0}</td>
-            <td>${row.completions ?? 0}</td>
-          `;
-          ageLeaderboardBody.appendChild(tr);
-        });
+        // Full data for masjid + age grouping
+        const fullRes = await fetch("/api/leaderboard-full");
+        fullLeaderboardCache = await fullRes.json() || [];
+        renderMasjidLeaderboard();
+        renderAgeLeaderboard();
 
       } catch (err) {
         console.error("Error loading leaderboards:", err);
       }
     }
 
-    function renderMasjidLeaderboard(data) {
+    function renderMasjidLeaderboard() {
       const filter = masjidFilterInput.value.trim().toLowerCase();
       masjidLeaderboardBody.innerHTML = "";
-      data
+
+      const data = (fullLeaderboardCache || [])
         .filter(row => !filter || (row.masjid || "").toLowerCase().includes(filter))
-        .forEach((row, idx) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${row.childName || ""}</td>
-            <td>${row.masjid || ""}</td>
-            <td>${row.city || ""}</td>
-            <td>${row.currentStreak ?? row.streak ?? 0}</td>
-            <td>${row.bestStreak ?? 0}</td>
-          `;
-          masjidLeaderboardBody.appendChild(tr);
+        .sort((a, b) => {
+          // Sort: completions desc, currentStreak desc, bestStreak desc
+          if ((b.completionsCount ?? 0) !== (a.completionsCount ?? 0)) {
+            return (b.completionsCount ?? 0) - (a.completionsCount ?? 0);
+          }
+          if ((b.currentStreak ?? 0) !== (a.currentStreak ?? 0)) {
+            return (b.currentStreak ?? 0) - (a.currentStreak ?? 0);
+          }
+          return (b.bestStreak ?? 0) - (a.bestStreak ?? 0);
         });
+
+      data.forEach((row, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${row.name || ""}</td>
+          <td>${row.masjid || ""}</td>
+          <td>${row.city || ""}</td>
+          <td>${row.currentStreak ?? 0}</td>
+          <td>${row.bestStreak ?? 0}</td>
+          <td>${row.completionsCount ?? 0}</td>
+        `;
+        masjidLeaderboardBody.appendChild(tr);
+      });
     }
 
-    masjidFilterInput.addEventListener("input", async () => {
-      try {
-        const masjidRes = await fetch("/api/leaderboard/masjid");
-        const masjidData = await masjidRes.json();
-        renderMasjidLeaderboard(masjidData || []);
-      } catch (err) {
-        console.error("Error filtering masjid leaderboard:", err);
-      }
+    masjidFilterInput.addEventListener("input", () => {
+      renderMasjidLeaderboard();
     });
+
+    function renderAgeLeaderboard() {
+      ageLeaderboardBody.innerHTML = "";
+      if (!fullLeaderboardCache || fullLeaderboardCache.length === 0) return;
+
+      const groups = [
+        { label: "3–6", min: 3, max: 6 },
+        { label: "7–10", min: 7, max: 10 },
+        { label: "11–14", min: 11, max: 14 },
+        { label: "15–17", min: 15, max: 17 },
+      ];
+
+      groups.forEach(group => {
+        const members = fullLeaderboardCache.filter(u =>
+          typeof u.age === "number" &&
+          u.age >= group.min &&
+          u.age <= group.max
+        );
+        const totalParticipants = members.length;
+        const avgStreak = totalParticipants
+          ? Math.round(
+              members.reduce((sum, u) => sum + (u.currentStreak ?? 0), 0) /
+              totalParticipants
+            )
+          : 0;
+        const completions = members.reduce((sum, u) => sum + (u.completionsCount ?? 0), 0);
+
+        if (totalParticipants === 0 && completions === 0) return;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${group.label}</td>
+          <td>${totalParticipants}</td>
+          <td>${avgStreak}</td>
+          <td>${completions}</td>
+        `;
+        ageLeaderboardBody.appendChild(tr);
+      });
+    }
 
     // Admin data
     async function loadAdminData() {
@@ -858,21 +936,21 @@
 
       try {
         // Participants
-        const pRes = await fetch("/api/admin/participants", { headers });
+        const pRes = await fetch("/api/admin/users", { headers });
         const participants = await pRes.json();
         adminParticipantsBody.innerHTML = "";
         (participants || []).forEach((p) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${p.childName || ""}</td>
+            <td>${p.name || ""}</td>
             <td>${p.age ?? ""}</td>
             <td>${p.city || ""}</td>
             <td>${p.masjid || ""}</td>
             <td>${p.parentName || ""}</td>
             <td>${p.email || ""}</td>
-            <td>${p.currentStreak ?? p.streak ?? 0}</td>
+            <td>${p.currentStreak ?? 0}</td>
             <td>${p.bestStreak ?? 0}</td>
-            <td>${p.daysCompleted ?? 0}</td>
+            <td>${p.completionsCount ?? 0}</td>
           `;
           adminParticipantsBody.appendChild(tr);
         });
@@ -884,14 +962,13 @@
         (sponsors || []).forEach((s) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${s.sponsorName || ""}</td>
-            <td>${s.sponsorEmail || ""}</td>
-            <td>${s.sponsorCity || ""}</td>
-            <td>${s.sponsorPrize || ""}</td>
-            <td>${s.status || "pending"}</td>
+            <td>${s.businessName || ""}</td>
+            <td>${s.contactEmail || ""}</td>
+            <td>${s.contactPhone || ""}</td>
+            <td>${s.prizeDescription || ""}</td>
+            <td>${s.approved ? "Yes" : "No"}</td>
             <td>
-              <button data-id="${s.id}" data-action="approve">Approve</button>
-              <button data-id="${s.id}" data-action="reject" class="btn-secondary">Reject</button>
+              ${s.approved ? "" : `<button data-id="${s.id}" data-action="approve">Approve</button>`}
             </td>
           `;
           adminSponsorsBody.appendChild(tr);
@@ -903,8 +980,8 @@
         adminPhotosBody.innerHTML = "";
         (photos || []).forEach((c) => {
           const tr = document.createElement("tr");
-          const imgCell = c.photoUrl
-            ? `<img src="${c.photoUrl}" alt="Check-in photo" />`
+          const imgCell = c.photoFilename
+            ? `<img src="/uploads/${c.photoFilename}" alt="Check-in photo" />`
             : "";
           tr.innerHTML = `
             <td>${c.date || ""}</td>
@@ -922,14 +999,14 @@
       }
     }
 
-    // Admin sponsor action buttons
+    // Admin sponsor action buttons (approve only)
     adminSponsorsBody.addEventListener("click", async (e) => {
       const btn = e.target.closest("button");
       if (!btn) return;
 
       const id = btn.getAttribute("data-id");
       const action = btn.getAttribute("data-action");
-      if (!id || !action) return;
+      if (!id || action !== "approve") return;
 
       const headers = {
         ...API_HEADERS(),
@@ -937,7 +1014,7 @@
       };
 
       try {
-        const res = await fetch(`/api/admin/sponsors/${id}/${action}`, {
+        const res = await fetch(`/api/admin/sponsors/${id}/approve`, {
           method: "POST",
           headers
         });
@@ -945,7 +1022,7 @@
         if (!res.ok) {
           setMessage(adminMessage, data.error || "Failed to update sponsor.", "error");
         } else {
-          setMessage(adminMessage, "Sponsor updated.", "success");
+          setMessage(adminMessage, "Sponsor approved.", "success");
           loadAdminData();
         }
       } catch (err) {
@@ -954,13 +1031,13 @@
       }
     });
 
-    // Export completions
+    // Export completions (uses /api/admin/export-completers)
     exportCompletionsBtn.addEventListener("click", async () => {
       const headers = API_HEADERS();
       if (!headers.Authorization) return;
 
       try {
-        const res = await fetch("/api/admin/export-completions", {
+        const res = await fetch("/api/admin/export-completers", {
           headers
         });
         if (!res.ok) {
@@ -973,7 +1050,7 @@
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "fajr40_completions.csv";
+        a.download = "fajr40_completers.csv";
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -985,37 +1062,36 @@
       }
     });
 
-    // Handle /admin route client-side
-    document.addEventListener("DOMContentLoaded", () => {
-      const isAdmin = localStorage.getItem("isAdmin") === "true";
+    // Handle /admin route + restore session
+    document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem("token");
 
       if (window.location.pathname === "/admin") {
-        if (isAdmin && token && adminSection) {
-          authSection.style.display = "none";
-          dashboardSection.style.display = "none";
-          adminSection.style.display = "block";
-          loadAdminData();
-          adminSection.scrollIntoView({ behavior: "smooth" });
-        } else {
+        if (!token) {
           window.location.href = "/";
+          return;
         }
+        const user = await loadProfile();
+        if (!user || !user.isAdmin) {
+          window.location.href = "/";
+          return;
+        }
+        authSection.style.display = "none";
+        dashboardSection.style.display = "none";
+        adminSection.style.display = "block";
+        await loadLeaderboards();
+        await loadAdminData();
+        adminSection.scrollIntoView({ behavior: "smooth" });
       } else {
-        // Normal home load; if already logged in, restore state
         if (token) {
-          authSection.style.display = "none";
-          dashboardSection.style.display = "block";
-          if (isAdmin && adminSection) {
-            adminSection.style.display = "block";
-            loadAdminData();
-          }
-          loadLeaderboards();
+          await loadProfile();
+          await loadLeaderboards();
         } else {
           // Not logged in
           authSection.style.display = "block";
           dashboardSection.style.display = "none";
           if (adminSection) adminSection.style.display = "none";
-          loadLeaderboards();
+          await loadLeaderboards();
         }
       }
     });

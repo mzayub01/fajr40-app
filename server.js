@@ -610,8 +610,9 @@ app.get(
              cp.date,
              cp.photoFilename,
              cp.createdAt,
-             u.name,
-             u.masjid
+             u.name AS childName,
+             u.masjid,
+             u.city
       FROM checkin_photos cp
       JOIN users u ON u.id = cp.userId
     `;
