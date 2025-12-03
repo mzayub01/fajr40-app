@@ -17,6 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/public", express.static(path.join(__dirname, "public")));
+// Serve the same SPA for / and /admin – front-end will decide what to show
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ======== DB SETUP =========
