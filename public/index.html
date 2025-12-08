@@ -10,18 +10,18 @@
       box-sizing: border-box;
     }
 
-  body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f5f5f5;
-  color: #111827;
-  overflow-x: hidden; /* prevent whole page from scrolling sideways */
-}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      color: #111827;
+      overflow-x: hidden; /* stop whole page from scrolling sideways */
+    }
 
     header {
       background: linear-gradient(135deg, #0f766e, #14b8a6);
       color: white;
-      padding: 1.5rem;
+      padding: 1.5rem 1rem 1rem;
       text-align: center;
     }
 
@@ -48,6 +48,34 @@
       padding: 0.4rem 0.75rem;
       border-radius: 999px;
       display: inline-block;
+    }
+
+    /* Top navigation */
+    #main-nav {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .nav-btn {
+      background: transparent !important;
+      color: #0f172a !important;
+      border: none;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      background: #0f766e !important;
+      color: #ffffff !important;
     }
 
     main {
@@ -123,15 +151,6 @@
     .btn-secondary:hover {
       background: #d1d5db;
     }
-/* Highlight the Fajr check-in button in orange */
-#checkin-btn {
-  background: #f97316;      /* orange */
-  color: white;
-}
-
-#checkin-btn:hover {
-  background: #ea580c;      /* slightly darker orange */
-}
 
     .two-column {
       display: grid;
@@ -157,17 +176,16 @@
       gap: 0.75rem;
     }
 
-.leaderboard-table-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  max-width: 100%;
-}
+    .leaderboard-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+    }
 
-/* Tables will be at least 650px wide so they scroll inside the wrapper,
-   but the wrapper itself never makes the whole page scroll */
-.leaderboard-table-wrapper table {
-  width: 100%;
-  min
+    .leaderboard-table-wrapper table {
+      width: 100%;
+      min-width: 650px; /* ensures horizontal scroll on mobiles */
+    }
 
     table {
       width: 100%;
@@ -247,6 +265,24 @@
         width: 100%;
       }
     }
+
+    /* Highlight the Fajr check-in button in orange */
+    #checkin-btn {
+      background: #f97316;      /* orange */
+      color: white;
+    }
+
+    #checkin-btn:hover {
+      background: #ea580c;      /* slightly darker orange */
+    }
+
+    /* Simple sub-heading on home */
+    .home-intro {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: #4b5563;
+    }
+
   </style>
 </head>
 <body>
@@ -255,282 +291,303 @@
     <p>Inspiring young hearts to stand for Fajr in the masjid for 40 days, inshaAllah.</p>
     <p class="tagline">Parents register on behalf of children. Track their streak, celebrate their effort, and earn rewards.</p>
     <div class="sponsor-banner">
-      Local business? <strong>Sponsor the Fajr 40 Challenge</strong> and donate prizes for children who complete it.
+      Local business? <strong>Sponsor the Fajr 40 Challenge</strong> so every child who completes 40 days can receive a prize.
     </div>
   </header>
 
+  <!-- Top navigation -->
+  <nav id="main-nav">
+    <button type="button" class="nav-btn active" id="nav-home">Home</button>
+    <button type="button" class="nav-btn" id="nav-sponsor">Sponsor</button>
+    <button type="button" class="nav-btn" id="nav-admin" style="display:none;">Admin</button>
+  </nav>
+
   <main>
-    <!-- Auth & basic actions -->
-    <section id="auth-section">
-      <h2>Register &amp; Login</h2>
-      <div class="two-column">
-        <!-- Registration -->
-        <div>
-          <h3>Parent Registration</h3>
-          <form id="register-form">
-            <div class="form-group">
-              <label for="parentName">Parent Name</label>
-              <input type="text" id="parentName" required />
-            </div>
-            <div class="form-group">
-              <label for="childName">Child Name</label>
-              <input type="text" id="childName" required />
-            </div>
-            <div class="form-group">
-              <label for="email">Parent Email</label>
-              <input type="email" id="email" required />
-            </div>
-            <div class="form-group">
-              <label for="city">City</label>
-              <input type="text" id="city" required />
-            </div>
-            <div class="form-group">
-              <label for="masjid">Masjid</label>
-              <input type="text" id="masjid" required />
-            </div>
-            <div class="form-group">
-              <label for="age">Child Age (3–17)</label>
-              <input type="number" id="age" min="3" max="17" required />
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" id="password" required />
-            </div>
-            <div class="form-group">
-              <button type="submit">Register</button>
-            </div>
-          </form>
-          <div id="register-message" class="message"></div>
-        </div>
+    <!-- 🏠 HOME VIEW: Register/Login + Dashboard + Leaderboards -->
+    <div id="home-view">
+      <!-- Auth -->
+      <section id="auth-section">
+        <h2>Join the Fajr 40 Challenge</h2>
+        <p class="home-intro">
+          <strong>Step 1:</strong> Register as a parent and add your child.<br />
+          <strong>Step 2:</strong> Each day your child attends Fajr in the masjid, log in and check in.<br />
+          <strong>Step 3:</strong> Complete 40 days in a row and qualify for prizes inshaAllah.
+        </p>
+        <div class="two-column">
+          <!-- Registration -->
+          <div>
+            <h3>Register for the Fajr 40 Challenge</h3>
+            <form id="register-form">
+              <div class="form-group">
+                <label for="parentName">Parent Name</label>
+                <input type="text" id="parentName" required />
+              </div>
+              <div class="form-group">
+                <label for="childName">Child Name</label>
+                <input type="text" id="childName" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Parent Email</label>
+                <input type="email" id="email" required />
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" required />
+              </div>
+              <div class="form-group">
+                <label for="masjid">Masjid</label>
+                <input type="text" id="masjid" required />
+              </div>
+              <div class="form-group">
+                <label for="age">Child Age (3–17)</label>
+                <input type="number" id="age" min="3" max="17" required />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required />
+              </div>
+              <div class="form-group">
+                <button type="submit">Register</button>
+              </div>
+            </form>
+            <div id="register-message" class="message"></div>
+          </div>
 
-        <!-- Login -->
-        <div>
-          <h3>Login</h3>
-          <form id="login-form">
-            <div class="form-group">
-              <label for="loginEmail">Parent Email</label>
-              <input type="email" id="loginEmail" required />
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">Password</label>
-              <input type="password" id="loginPassword" required />
-            </div>
-            <div class="form-group">
-              <button type="submit">Login</button>
-            </div>
-          </form>
-          <div id="login-message" class="message"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Logged-in dashboard -->
-    <section id="dashboard-section" style="display:none;">
-      <h2>My Child's Fajr Progress</h2>
-      <p id="welcome-text"></p>
-      <p id="streak-text"></p>
-      <p id="extra-stats"></p>
-
-      <h3>Fajr Check-in</h3>
-      <form id="checkin-form" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="checkin-photo">Upload Fajr photo (optional but encouraged)</label>
-          <input type="file" id="checkin-photo" accept="image/*" />
-        </div>
-        <div class="form-group">
-          <button type="submit" id="checkin-btn">Check-in for today's Fajr</button>
-        </div>
-      </form>
-      <img id="checkin-photo-preview" class="checkin-photo-preview" style="display:none;" />
-      <div id="checkin-message" class="message"></div>
-
-      <button id="logout-btn" class="btn-secondary" style="margin-top:0.75rem;">Logout</button>
-    </section>
-
-    <!-- Sponsor section -->
-    <section id="sponsor-section">
-      <h2>Sponsor the Fajr 40 Challenge</h2>
-      <p style="font-size:0.9rem;">
-        Local businesses and individuals can sponsor prizes for children who complete 40 consecutive days of Fajr in the masjid.
-        Your sponsorship will be reviewed by the admin team inshaAllah.
-      </p>
-      <form id="sponsor-form">
-        <div class="form-group">
-          <label for="sponsorName">Business / Sponsor Name</label>
-          <input type="text" id="sponsorName" required />
-        </div>
-        <div class="form-group">
-          <label for="sponsorEmail">Contact Email</label>
-          <input type="email" id="sponsorEmail" required />
-        </div>
-        <div class="form-group">
-          <label for="sponsorPhone">Contact Phone</label>
-          <input type="text" id="sponsorPhone" />
-        </div>
-        <div class="form-group">
-          <label for="sponsorPrize">Prize details (e.g. voucher, gift, experience)</label>
-          <input type="text" id="sponsorPrize" required />
-        </div>
-        <div class="form-group">
-          <button type="submit">Submit Sponsorship Offer</button>
-        </div>
-      </form>
-      <div id="sponsor-message" class="message"></div>
-    </section>
-
-    <!-- Leaderboards -->
-    <section id="leaderboard-section">
-      <h2>Leaderboards</h2>
-      <p style="font-size:0.9rem;">Names below refer to children (not parents). Only city and masjid are shown here; parent contact details remain private.</p>
-
-      <div class="leaderboard-tables">
-        <!-- Global leaderboard -->
-        <div>
-          <h3>Global Leaderboard</h3>
-          <div class="leaderboard-table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Child</th>
-                  <th>City</th>
-                  <th>Masjid</th>
-                  <th>Current Streak</th>
-                  <th>Best Streak</th>
-                  <th>40-day Completions</th>
-                </tr>
-              </thead>
-              <tbody id="global-leaderboard-body">
-                <!-- Populated by JS -->
-              </tbody>
-            </table>
+          <!-- Login -->
+          <div>
+            <h3>Log in to check in for today's Fajr</h3>
+            <form id="login-form">
+              <div class="form-group">
+                <label for="loginEmail">Parent Email</label>
+                <input type="email" id="loginEmail" required />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" required />
+              </div>
+              <div class="form-group">
+                <button type="submit">Login</button>
+              </div>
+            </form>
+            <div id="login-message" class="message"></div>
           </div>
         </div>
+      </section>
 
-        <!-- Masjid leaderboard -->
-        <div>
-          <h3>Masjid Leaderboard</h3>
-          <div class="form-group" style="max-width:250px;margin-bottom:0.5rem;">
-            <label for="masjidFilter">Filter by Masjid</label>
-            <input type="text" id="masjidFilter" placeholder="Enter masjid name" />
+      <!-- Dashboard for logged-in parents -->
+      <section id="dashboard-section" style="display:none;">
+        <h2>Your Child's Fajr 40 Progress</h2>
+        <p id="welcome-text"></p>
+        <p id="streak-text"></p>
+        <p id="extra-stats"></p>
+
+        <h3>Fajr Check-in</h3>
+        <form id="checkin-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="checkin-photo">Upload a Fajr photo (optional but encouraged for evidence)</label>
+            <input type="file" id="checkin-photo" accept="image/*" />
           </div>
-          <div class="leaderboard-table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Child</th>
-                  <th>Masjid</th>
-                  <th>City</th>
-                  <th>Current Streak</th>
-                  <th>Best Streak</th>
-                  <th>40-day Completions</th>
-                </tr>
-              </thead>
-              <tbody id="masjid-leaderboard-body">
-                <!-- Populated by JS -->
-              </tbody>
-            </table>
+          <div class="form-group">
+            <button type="submit" id="checkin-btn">Check-in for today's Fajr</button>
+          </div>
+        </form>
+        <img id="checkin-photo-preview" class="checkin-photo-preview" style="display:none;" />
+        <div id="checkin-message" class="message"></div>
+
+        <button id="logout-btn" class="btn-secondary" style="margin-top:0.75rem;">Logout</button>
+      </section>
+
+      <!-- Leaderboards -->
+      <section id="leaderboard-section">
+        <h2>Leaderboards</h2>
+        <p style="font-size:0.9rem;">Names below refer to children (not parents). Only city and masjid are shown here; parent contact details remain private.</p>
+
+        <div class="leaderboard-tables">
+          <!-- Global leaderboard -->
+          <div>
+            <h3>Global Leaderboard</h3>
+            <div class="leaderboard-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Child</th>
+                    <th>City</th>
+                    <th>Masjid</th>
+                    <th>Current Streak</th>
+                    <th>Best Streak</th>
+                    <th>40-day Completions</th>
+                  </tr>
+                </thead>
+                <tbody id="global-leaderboard-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Masjid leaderboard -->
+          <div>
+            <h3>Masjid Leaderboard</h3>
+            <div class="form-group" style="max-width:250px;margin-bottom:0.5rem;">
+              <label for="masjidFilter">Filter by Masjid</label>
+              <input type="text" id="masjidFilter" placeholder="Enter masjid name" />
+            </div>
+            <div class="leaderboard-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Child</th>
+                    <th>Masjid</th>
+                    <th>City</th>
+                    <th>Current Streak</th>
+                    <th>Best Streak</th>
+                    <th>40-day Completions</th>
+                  </tr>
+                </thead>
+                <tbody id="masjid-leaderboard-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Age group leaderboard -->
+          <div>
+            <h3>Age Group Leaderboard</h3>
+            <div class="leaderboard-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Age Group</th>
+                    <th>Total Participants</th>
+                    <th>Avg Current Streak</th>
+                    <th>Total 40-day Completions</th>
+                  </tr>
+                </thead>
+                <tbody id="age-leaderboard-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+      </section>
+    </div>
 
-        <!-- Age group leaderboard -->
-        <div>
-          <h3>Age Group Leaderboard</h3>
-          <div class="leaderboard-table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Age Group</th>
-                  <th>Total Participants</th>
-                  <th>Avg Current Streak</th>
-                  <th>Total 40-day Completions</th>
-                </tr>
-              </thead>
-              <tbody id="age-leaderboard-body">
-                <!-- Populated by JS -->
-              </tbody>
-            </table>
+    <!-- 💚 SPONSOR VIEW: separate tab/page -->
+    <div id="sponsor-view" style="display:none;">
+      <section id="sponsor-section">
+        <h2>Sponsor the Fajr 40 Challenge</h2>
+        <p style="font-size:0.9rem;">
+          Local businesses and individuals can sponsor prizes for children who complete
+          40 consecutive days of Fajr in the masjid.
+          Your sponsorship will be reviewed by the admin team inshaAllah.
+        </p>
+        <form id="sponsor-form">
+          <div class="form-group">
+            <label for="sponsorName">Business / Sponsor Name</label>
+            <input type="text" id="sponsorName" required />
           </div>
+          <div class="form-group">
+            <label for="sponsorEmail">Contact Email</label>
+            <input type="email" id="sponsorEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="sponsorPhone">Contact Phone</label>
+            <input type="text" id="sponsorPhone" />
+          </div>
+          <div class="form-group">
+            <label for="sponsorPrize">Prize details (e.g. voucher, gift, experience)</label>
+            <input type="text" id="sponsorPrize" required />
+          </div>
+          <div class="form-group">
+            <button type="submit">Submit Sponsorship Offer</button>
+          </div>
+        </form>
+        <div id="sponsor-message" class="message"></div>
+      </section>
+    </div>
+
+    <!-- 🔐 ADMIN VIEW: separate page for admins only -->
+    <div id="admin-view" style="display:none;">
+      <section id="admin-section">
+        <h2>Admin Dashboard</h2>
+        <p class="admin-warning">
+          Admin access only. Parent and child personal details shown here must be handled securely and kept private.
+        </p>
+
+        <!-- Participants -->
+        <h3>Participants</h3>
+        <div class="leaderboard-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Child</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Masjid</th>
+                <th>Parent Name</th>
+                <th>Parent Email</th>
+                <th>Current Streak</th>
+                <th>Best Streak</th>
+                <th>40-day Completions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-participants-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
         </div>
-      </div>
-    </section>
 
-    <!-- Admin section (hidden by default) -->
-    <section id="admin-section">
-      <h2>Admin Dashboard</h2>
-      <p class="admin-warning">
-        Admin access only. Parent and child personal details shown here must be handled securely and kept private.
-      </p>
+        <!-- Sponsors -->
+        <h3>Sponsored Prizes</h3>
+        <div class="leaderboard-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Prize</th>
+                <th>Approved</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-sponsors-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
 
-      <!-- Participants -->
-      <h3>Participants</h3>
-      <div class="leaderboard-table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Child</th>
-              <th>Age</th>
-              <th>City</th>
-              <th>Masjid</th>
-              <th>Parent Name</th>
-              <th>Parent Email</th>
-              <th>Current Streak</th>
-              <th>Best Streak</th>
-              <th>40-day Completions</th>
-            </tr>
-          </thead>
-          <tbody id="admin-participants-body">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
+        <!-- Check-in photos -->
+        <h3>Recent Check-in Photos</h3>
+        <div class="leaderboard-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Child</th>
+                <th>Masjid</th>
+                <th>City</th>
+                <th>Photo</th>
+              </tr>
+            </thead>
+            <tbody id="admin-photos-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
 
-      <!-- Sponsors -->
-      <h3>Sponsored Prizes</h3>
-      <div class="leaderboard-table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Business</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Prize</th>
-              <th>Approved</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="admin-sponsors-body">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Check-in photos -->
-      <h3>Recent Check-in Photos</h3>
-      <div class="leaderboard-table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Child</th>
-              <th>Masjid</th>
-              <th>City</th>
-              <th>Photo</th>
-            </tr>
-          </thead>
-          <tbody id="admin-photos-body">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <button id="export-completions-btn" style="margin-top:0.75rem;">Export 40-Day Completers (CSV)</button>
-      <div id="admin-message" class="message"></div>
-    </section>
+        <button id="export-completions-btn" style="margin-top:0.75rem;">Export 40-Day Completers (CSV)</button>
+        <div id="admin-message" class="message"></div>
+      </section>
+    </div>
   </main>
 
   <script>
+    // --- DOM element references ---
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
     const checkinForm = document.getElementById("checkin-form");
@@ -542,9 +599,14 @@
     const sponsorMessage = document.getElementById("sponsor-message");
     const adminMessage = document.getElementById("admin-message");
 
+    const homeView = document.getElementById("home-view");
+    const sponsorView = document.getElementById("sponsor-view");
+    const adminView = document.getElementById("admin-view");
+
     const dashboardSection = document.getElementById("dashboard-section");
     const authSection = document.getElementById("auth-section");
     const adminSection = document.getElementById("admin-section");
+    const leaderboardSection = document.getElementById("leaderboard-section");
 
     const welcomeText = document.getElementById("welcome-text");
     const streakText = document.getElementById("streak-text");
@@ -564,13 +626,17 @@
     const adminPhotosBody = document.getElementById("admin-photos-body");
     const exportCompletionsBtn = document.getElementById("export-completions-btn");
 
-    let fullLeaderboardCache = [];
+    const navHome = document.getElementById("nav-home");
+    const navSponsor = document.getElementById("nav-sponsor");
+    const navAdmin = document.getElementById("nav-admin");
 
+    let fullLeaderboardCache = [];
+    let currentUser = null;
+
+    // --- Helpers ---
     const API_HEADERS = () => {
       const token = localStorage.getItem("token");
-      return token
-        ? { Authorization: "Bearer " + token }
-        : {};
+      return token ? { Authorization: "Bearer " + token } : {};
     };
 
     function setMessage(el, text, type) {
@@ -579,19 +645,65 @@
       el.className = "message " + (type || "");
     }
 
+    function setNavActive(view) {
+      [navHome, navSponsor, navAdmin].forEach(btn => {
+        if (!btn) return;
+        btn.classList.remove("active");
+      });
+      if (view === "home" && navHome) navHome.classList.add("active");
+      if (view === "sponsor" && navSponsor) navSponsor.classList.add("active");
+      if (view === "admin" && navAdmin) navAdmin.classList.add("active");
+    }
+
+    function showView(view) {
+      const token = localStorage.getItem("token");
+      const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+      // Default hide all views
+      homeView.style.display = "none";
+      sponsorView.style.display = "none";
+      adminView.style.display = "none";
+
+      if (view === "home") {
+        homeView.style.display = "block";
+        // Within home: either show auth or dashboard (plus leaderboard)
+        if (token && currentUser) {
+          authSection.style.display = "none";
+          dashboardSection.style.display = "block";
+        } else {
+          authSection.style.display = "block";
+          dashboardSection.style.display = "none";
+        }
+        leaderboardSection.style.display = "block";
+        if (adminSection) adminSection.style.display = "none";
+      } else if (view === "sponsor") {
+        sponsorView.style.display = "block";
+      } else if (view === "admin") {
+        if (!isAdmin) {
+          // Non-admins kicked back to home
+          showView("home");
+          return;
+        }
+        adminView.style.display = "block";
+      }
+
+      // Update nav button styling
+      setNavActive(view);
+    }
+
     function logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("isAdmin");
-      authSection.style.display = "block";
-      dashboardSection.style.display = "none";
-      if (adminSection) adminSection.style.display = "none";
+      currentUser = null;
+      if (navAdmin) navAdmin.style.display = "none";
+      showView("home");
     }
 
     logoutBtn.addEventListener("click", () => {
       logout();
     });
 
-    // Preview photo on selection
+    // Preview checkin photo
     if (checkinPhotoInput) {
       checkinPhotoInput.addEventListener("change", () => {
         const file = checkinPhotoInput.files[0];
@@ -608,7 +720,7 @@
       });
     }
 
-    // Registration
+    // --- Registration ---
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setMessage(registerMessage, "", "");
@@ -629,9 +741,7 @@
       try {
         const res = await fetch("/api/register", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ parentName, childName, email, city, masjid, age, password })
         });
 
@@ -648,7 +758,7 @@
       }
     });
 
-    // Fetch profile (/api/me) and update dashboard + admin visibility
+    // --- Load profile (/api/me) ---
     async function loadProfile() {
       const headers = API_HEADERS();
       if (!headers.Authorization) return null;
@@ -659,15 +769,17 @@
           return null;
         }
         const user = await res.json();
+        currentUser = user;
 
-        // Save isAdmin for later
+        // Save isAdmin flag & show admin nav if needed
         localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+        if (user.isAdmin && navAdmin) {
+          navAdmin.style.display = "inline-block";
+        } else if (navAdmin) {
+          navAdmin.style.display = "none";
+        }
 
-        // Show dashboard
-        authSection.style.display = "none";
-        dashboardSection.style.display = "block";
-
-        // Fill texts
+        // Fill dashboard texts
         const childName = user.name || "your child";
         const ageText = user.age ? ` (age ${user.age})` : "";
         const city = user.city || "";
@@ -682,14 +794,6 @@
         extraStats.textContent =
           `Best streak: ${user.bestStreak ?? 0} · 40-day completions: ${user.completionsCount ?? 0}`;
 
-        // Admin?
-        if (user.isAdmin && adminSection) {
-          adminSection.style.display = "block";
-          await loadAdminData();
-        } else if (adminSection) {
-          adminSection.style.display = "none";
-        }
-
         return user;
       } catch (err) {
         console.error("Error loading profile:", err);
@@ -697,7 +801,7 @@
       }
     }
 
-    // Login
+    // --- Login ---
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setMessage(loginMessage, "", "");
@@ -708,9 +812,7 @@
       try {
         const res = await fetch("/api/login", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password })
         });
 
@@ -723,11 +825,12 @@
         // Store token
         localStorage.setItem("token", data.token);
 
-        // Immediately load profile & stats
+        // Load profile & leaderboards
         await loadProfile();
-
-        // After login, load leaderboards
         await loadLeaderboards();
+
+        // Switch to home dashboard view
+        showView("home");
 
         setMessage(loginMessage, "Login successful.", "success");
       } catch (err) {
@@ -736,7 +839,7 @@
       }
     });
 
-    // Check-in (with or without photo)
+    // --- Check-in (with or without photo) ---
     checkinForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setMessage(checkinMessage, "", "");
@@ -758,13 +861,11 @@
 
           res = await fetch("/api/checkin-photo", {
             method: "POST",
-            headers: {
-              Authorization: "Bearer " + token
-            },
+            headers: { Authorization: "Bearer " + token },
             body: formData
           });
         } else {
-          // Use normal checkin (no photo)
+          // Use normal check-in (no photo)
           res = await fetch("/api/checkin", {
             method: "POST",
             headers: {
@@ -783,13 +884,13 @@
 
         setMessage(checkinMessage, data.message || "Fajr check-in recorded! MashaAllah.", "success");
 
-        // Reload profile so streaks are accurate
+        // Reload profile & leaderboards
         await loadProfile();
-
-        // Refresh leaderboards & admin view
         await loadLeaderboards();
+
+        // If admin, refresh admin data in background
         if (localStorage.getItem("isAdmin") === "true") {
-          await loadAdminData();
+          loadAdminData();
         }
       } catch (err) {
         console.error(err);
@@ -797,7 +898,7 @@
       }
     });
 
-    // Sponsor form
+    // --- Sponsor form ---
     sponsorForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setMessage(sponsorMessage, "", "");
@@ -815,9 +916,7 @@
       try {
         const res = await fetch("/api/sponsors", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ businessName, contactEmail, contactPhone, prizeDescription })
         });
 
@@ -835,7 +934,7 @@
       }
     });
 
-    // Load leaderboards using /api/leaderboard and /api/leaderboard-full
+    // --- Leaderboards: global + full ---
     async function loadLeaderboards() {
       try {
         // Global (top 100)
@@ -874,7 +973,6 @@
       const data = (fullLeaderboardCache || [])
         .filter(row => !filter || (row.masjid || "").toLowerCase().includes(filter))
         .sort((a, b) => {
-          // Sort: completions desc, currentStreak desc, bestStreak desc
           if ((b.completionsCount ?? 0) !== (a.completionsCount ?? 0)) {
             return (b.completionsCount ?? 0) - (a.completionsCount ?? 0);
           }
@@ -942,7 +1040,7 @@
       });
     }
 
-    // Admin data
+    // --- Admin data ---
     async function loadAdminData() {
       const headers = API_HEADERS();
       if (!headers.Authorization) return;
@@ -1012,7 +1110,7 @@
       }
     }
 
-    // Admin sponsor action buttons (approve only)
+    // Admin sponsor approve
     adminSponsorsBody.addEventListener("click", async (e) => {
       const btn = e.target.closest("button");
       if (!btn) return;
@@ -1044,7 +1142,7 @@
       }
     });
 
-    // Export completions (uses /api/admin/export-completers)
+    // Export 40-day completers
     exportCompletionsBtn.addEventListener("click", async () => {
       const headers = API_HEADERS();
       if (!headers.Authorization) return;
@@ -1075,37 +1173,41 @@
       }
     });
 
-    // Handle /admin route + restore session
+    // --- Nav click handlers ---
+    navHome.addEventListener("click", () => {
+      showView("home");
+    });
+
+    navSponsor.addEventListener("click", () => {
+      showView("sponsor");
+    });
+
+    navAdmin.addEventListener("click", async () => {
+      const isAdmin = localStorage.getItem("isAdmin") === "true";
+      if (!isAdmin) {
+        showView("home");
+        return;
+      }
+      showView("admin");
+      await loadAdminData();
+    });
+
+    // --- Initial load ---
     document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem("token");
+      if (token) {
+        await loadProfile();
+      }
+      await loadLeaderboards();
 
-      if (window.location.pathname === "/admin") {
-        if (!token) {
-          window.location.href = "/";
-          return;
-        }
-        const user = await loadProfile();
-        if (!user || !user.isAdmin) {
-          window.location.href = "/";
-          return;
-        }
-        authSection.style.display = "none";
-        dashboardSection.style.display = "none";
-        adminSection.style.display = "block";
-        await loadLeaderboards();
+      const path = window.location.pathname;
+      const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+      if (path === "/admin" && isAdmin) {
+        showView("admin");
         await loadAdminData();
-        adminSection.scrollIntoView({ behavior: "smooth" });
       } else {
-        if (token) {
-          await loadProfile();
-          await loadLeaderboards();
-        } else {
-          // Not logged in
-          authSection.style.display = "block";
-          dashboardSection.style.display = "none";
-          if (adminSection) adminSection.style.display = "none";
-          await loadLeaderboards();
-        }
+        showView("home");
       }
     });
   </script>
