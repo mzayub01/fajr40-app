@@ -10,54 +10,78 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg-dark: #020617;         /* page background */
+      --card-bg: #0b1220;         /* card background */
+      --card-border: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --accent: #22c55e;          /* green accent */
+      --accent-soft: #16a34a;
+      --accent-orange: #f97316;   /* check-in button */
+      --accent-orange-dark: #ea580c;
+      --nav-bg: #020617;
+      --nav-border: #1e293b;
+    }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
-      color: #111827;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: var(--text-main);
       overflow-x: hidden; /* stop whole page from scrolling sideways */
     }
 
     header {
-      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      background: linear-gradient(135deg, #0f172a, #111827);
       color: white;
-      padding: 1.5rem 1rem 1rem;
+      padding: 1.6rem 1rem 1.1rem;
       text-align: center;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
     }
 
     header h1 {
       margin: 0;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+      letter-spacing: 0.03em;
     }
 
     header p {
-      margin: 0.3rem 0 0;
-      font-size: 0.9rem;
+      margin: 0.4rem 0 0;
+      font-size: 0.95rem;
+      color: #e5e7eb;
     }
 
     .tagline {
-      font-size: 0.8rem;
-      color: #e0f2f1;
+      font-size: 0.85rem;
+      color: #9ca3af;
       margin-top: 0.35rem;
     }
 
     .sponsor-banner {
-      margin-top: 0.75rem;
+      margin-top: 0.9rem;
       font-size: 0.85rem;
-      background: rgba(15, 23, 42, 0.25);
-      padding: 0.4rem 0.75rem;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 0.5rem 0.9rem;
       border-radius: 999px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .sponsor-banner strong {
+      color: #facc15;
     }
 
     /* Top navigation */
     #main-nav {
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--nav-border);
       display: flex;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.4rem 1rem;
+      padding: 0.5rem 1rem;
       position: sticky;
       top: 0;
       z-index: 20;
@@ -65,36 +89,53 @@
 
     .nav-btn {
       background: transparent !important;
-      color: #0f172a !important;
-      border: none;
-      padding: 0.4rem 0.9rem;
+      color: #cbd5f5 !important;
+      border: 1px solid transparent;
+      padding: 0.45rem 1rem;
       border-radius: 999px;
       font-size: 0.9rem;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.16s ease;
+    }
+
+    .nav-btn:hover {
+      border-color: rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.8) !important;
     }
 
     .nav-btn.active {
-      background: #0f766e !important;
-      color: #ffffff !important;
+      background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+      color: #0b1120 !important;
+      border-color: transparent;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
     }
 
     main {
       max-width: 1100px;
-      margin: 1rem auto 2rem;
-      padding: 0 1rem;
+      margin: 1.2rem auto 2.5rem;
+      padding: 0 1rem 0.5rem;
     }
 
     section {
-      background: white;
-      border-radius: 0.75rem;
+      background: var(--card-bg);
+      border-radius: 0.9rem;
       padding: 1rem 1.2rem;
       margin-bottom: 1rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
     }
 
     h2, h3 {
       margin-top: 0;
       font-size: 1.2rem;
+      color: #f9fafb;
+    }
+
+    h2 {
+      font-size: 1.25rem;
     }
 
     form {
@@ -110,8 +151,9 @@
 
     label {
       display: block;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-bottom: 0.25rem;
+      color: var(--text-muted);
     }
 
     input,
@@ -121,35 +163,45 @@
       padding: 0.55rem 0.6rem;
       font-size: 0.95rem;
       border-radius: 0.5rem;
-      border: 1px solid #d4d4d4;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: var(--text-main);
+    }
+
+    input::placeholder {
+      color: #6b7280;
     }
 
     input:focus,
     select:focus {
       outline: none;
-      border-color: #0f766e;
-      box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
     }
 
     button {
-      background: #0f766e;
-      color: white;
+      background: var(--accent);
+      color: #020617;
       border: none;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.16s ease;
     }
 
     button:hover {
-      background: #115e59;
+      background: var(--accent-soft);
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.35);
+      transform: translateY(-1px);
     }
 
     .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
+      background: #111827;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
     }
 
     .btn-secondary:hover {
-      background: #d1d5db;
+      background: #020617;
     }
 
     .two-column {
@@ -160,15 +212,15 @@
 
     .message {
       margin-top: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     .message.success {
-      color: #16a34a;
+      color: #4ade80;
     }
 
     .message.error {
-      color: #b91c1c;
+      color: #f97373;
     }
 
     .leaderboard-tables {
@@ -180,6 +232,9 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       max-width: 100%;
+      border-radius: 0.6rem;
+      border: 1px solid #1f2937;
+      background: #020617;
     }
 
     .leaderboard-table-wrapper table {
@@ -190,19 +245,36 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
+      color: var(--text-main);
     }
 
     th, td {
       padding: 0.4rem 0.5rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #1f2937;
       text-align: left;
       white-space: nowrap;
     }
 
     th {
-      background: #f3f4f6;
+      background: #020617;
       font-weight: 600;
+      color: #9ca3af;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    tbody tr:hover {
+      background: rgba(34, 197, 94, 0.07);
     }
 
     /* Make any table images small & circular */
@@ -217,11 +289,12 @@
       margin-top: 0.5rem;
       max-width: 150px;
       border-radius: 0.5rem;
+      border: 1px solid #1f2937;
     }
 
     .admin-warning {
       font-size: 0.8rem;
-      color: #b91c1c;
+      color: #f97373;
       margin-top: 0.5rem;
     }
 
@@ -230,6 +303,26 @@
       display: none;
     }
 
+    .home-intro {
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Highlight the Fajr check-in button in orange */
+    #checkin-btn {
+      background: var(--accent-orange);
+      color: #0b1120;
+      border: none;
+    }
+
+    #checkin-btn:hover {
+      background: var(--accent-orange-dark);
+      box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4);
+    }
+
+    /* Fine-tune small screens */
     @media (max-width: 900px) {
       .two-column {
         grid-template-columns: 1fr;
@@ -238,7 +331,7 @@
 
     @media (max-width: 640px) {
       header h1 {
-        font-size: 1.35rem;
+        font-size: 1.5rem;
       }
 
       header p {
@@ -246,7 +339,7 @@
       }
 
       main {
-        padding: 0 0.75rem;
+        padding: 0 0.75rem 0.5rem;
       }
 
       form {
@@ -264,25 +357,15 @@
       button {
         width: 100%;
       }
-    }
 
-    /* Highlight the Fajr check-in button in orange */
-    #checkin-btn {
-      background: #f97316;      /* orange */
-      color: white;
-    }
+      table {
+        font-size: 0.78rem;
+      }
 
-    #checkin-btn:hover {
-      background: #ea580c;      /* slightly darker orange */
+      th, td {
+        padding: 0.36rem 0.4rem;
+      }
     }
-
-    /* Simple sub-heading on home */
-    .home-intro {
-      font-size: 0.95rem;
-      margin-bottom: 0.75rem;
-      color: #4b5563;
-    }
-
   </style>
 </head>
 <body>
@@ -291,7 +374,8 @@
     <p>Inspiring young hearts to stand for Fajr in the masjid for 40 days, inshaAllah.</p>
     <p class="tagline">Parents register on behalf of children. Track their streak, celebrate their effort, and earn rewards.</p>
     <div class="sponsor-banner">
-      Local business? <strong>Sponsor the Fajr 40 Challenge</strong> so every child who completes 40 days can receive a prize.
+      <span>🌙</span>
+      <span>Local business? <strong>Sponsor the Fajr 40 Challenge</strong> so every child who completes 40 days can receive a prize.</span>
     </div>
   </header>
 
@@ -400,7 +484,9 @@
       <!-- Leaderboards -->
       <section id="leaderboard-section">
         <h2>Leaderboards</h2>
-        <p style="font-size:0.9rem;">Names below refer to children (not parents). Only city and masjid are shown here; parent contact details remain private.</p>
+        <p style="font-size:0.9rem; color: var(--text-muted);">
+          Names below refer to children (not parents). Only city and masjid are shown here; parent contact details remain private.
+        </p>
 
         <div class="leaderboard-tables">
           <!-- Global leaderboard -->
@@ -480,7 +566,7 @@
     <div id="sponsor-view" style="display:none;">
       <section id="sponsor-section">
         <h2>Sponsor the Fajr 40 Challenge</h2>
-        <p style="font-size:0.9rem;">
+        <p style="font-size:0.9rem; color: var(--text-muted);">
           Local businesses and individuals can sponsor prizes for children who complete
           40 consecutive days of Fajr in the masjid.
           Your sponsorship will be reviewed by the admin team inshaAllah.
@@ -728,6 +814,7 @@
       const parentName = document.getElementById("parentName").value.trim();
       const childName = document.getElementById("childName").value.trim();
       const email = document.getElementById("email").value.trim();
+
       const city = document.getElementById("city").value.trim();
       const masjid = document.getElementById("masjid").value.trim();
       const age = parseInt(document.getElementById("age").value, 10);
