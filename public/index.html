@@ -764,14 +764,14 @@
         if (adminSection) adminSection.style.display = "none";
       } else if (view === "sponsor") {
         sponsorView.style.display = "block";
-      } else if (view === "admin") {
-        if (!isAdmin) {
-          // Non-admins kicked back to home
-          showView("home");
-          return;
-        }
-        adminView.style.display = "block";
-      }
+    } else if (view === "admin") {
+  if (!isAdmin) {
+    showView("home");
+    return;
+  }
+  adminView.style.display = "block";
+  adminSection.style.display = "block"; // ✅ THIS WAS MISSING
+}
 
       // Update nav button styling
       setNavActive(view);
