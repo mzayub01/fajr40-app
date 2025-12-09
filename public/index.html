@@ -310,6 +310,17 @@
       line-height: 1.5;
     }
 
+    .auth-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+
+    .auth-buttons button {
+      flex: 1 1 120px;
+    }
+
     /* Highlight the Fajr check-in button in orange */
     #checkin-btn {
       background: var(--accent-orange);
@@ -382,78 +393,88 @@
   <!-- Top navigation -->
   <nav id="main-nav">
     <button type="button" class="nav-btn active" id="nav-home">Home</button>
+    <button type="button" class="nav-btn" id="nav-leaderboard">Leaderboard</button>
     <button type="button" class="nav-btn" id="nav-sponsor">Sponsor</button>
     <button type="button" class="nav-btn" id="nav-admin" style="display:none;">Admin</button>
   </nav>
 
   <main>
-    <!-- 🏠 HOME VIEW: Register/Login + Dashboard + Leaderboards -->
+    <!-- 🏠 HOME VIEW: Intro + Auth + Dashboard -->
     <div id="home-view">
       <!-- Auth -->
       <section id="auth-section">
         <h2>Join the Fajr 40 Challenge</h2>
         <p class="home-intro">
-          <strong>Step 1:</strong> Register as a parent and add your child.<br />
-          <strong>Step 2:</strong> Each day your child attends Fajr in the masjid, log in and check in.<br />
-          <strong>Step 3:</strong> Complete 40 days in a row and qualify for prizes inshaAllah.
+          Help your child build a lifelong habit by attending Fajr in the masjid for 40 days in a row.
+          Register as a parent, add your child, and check in each day they attend Fajr.
         </p>
-        <div class="two-column">
-          <!-- Registration -->
-          <div>
-            <h3>Register for the Fajr 40 Challenge</h3>
-            <form id="register-form">
-              <div class="form-group">
-                <label for="parentName">Parent Name</label>
-                <input type="text" id="parentName" required />
-              </div>
-              <div class="form-group">
-                <label for="childName">Child Name</label>
-                <input type="text" id="childName" required />
-              </div>
-              <div class="form-group">
-                <label for="email">Parent Email</label>
-                <input type="email" id="email" required />
-              </div>
-              <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" id="city" required />
-              </div>
-              <div class="form-group">
-                <label for="masjid">Masjid</label>
-                <input type="text" id="masjid" required />
-              </div>
-              <div class="form-group">
-                <label for="age">Child Age (3–17)</label>
-                <input type="number" id="age" min="3" max="17" required />
-              </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required />
-              </div>
-              <div class="form-group">
-                <button type="submit">Register</button>
-              </div>
-            </form>
-            <div id="register-message" class="message"></div>
-          </div>
 
-          <!-- Login -->
-          <div>
-            <h3>Log in to check in for today's Fajr</h3>
-            <form id="login-form">
-              <div class="form-group">
-                <label for="loginEmail">Parent Email</label>
-                <input type="email" id="loginEmail" required />
-              </div>
-              <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" required />
-              </div>
-              <div class="form-group">
-                <button type="submit">Login</button>
-              </div>
-            </form>
-            <div id="login-message" class="message"></div>
+        <!-- Intro buttons: forms hidden until user clicks -->
+        <div class="auth-buttons">
+          <button type="button" id="open-register-btn">Register for the Fajr 40 Challenge</button>
+          <button type="button" id="open-login-btn" class="btn-secondary">Log in to check in for today's Fajr</button>
+        </div>
+
+        <!-- Forms are initially hidden; shown when buttons clicked -->
+        <div id="auth-forms" style="display:none; margin-top:1rem;">
+          <div class="two-column">
+            <!-- Registration -->
+            <div>
+              <h3>Register</h3>
+              <form id="register-form">
+                <div class="form-group">
+                  <label for="parentName">Parent Name</label>
+                  <input type="text" id="parentName" required />
+                </div>
+                <div class="form-group">
+                  <label for="childName">Child Name</label>
+                  <input type="text" id="childName" required />
+                </div>
+                <div class="form-group">
+                  <label for="email">Parent Email</label>
+                  <input type="email" id="email" required />
+                </div>
+                <div class="form-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" required />
+                </div>
+                <div class="form-group">
+                  <label for="masjid">Masjid</label>
+                  <input type="text" id="masjid" required />
+                </div>
+                <div class="form-group">
+                  <label for="age">Child Age (3–17)</label>
+                  <input type="number" id="age" min="3" max="17" required />
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" required />
+                </div>
+                <div class="form-group">
+                  <button type="submit">Register</button>
+                </div>
+              </form>
+              <div id="register-message" class="message"></div>
+            </div>
+
+            <!-- Login -->
+            <div>
+              <h3>Login</h3>
+              <form id="login-form">
+                <div class="form-group">
+                  <label for="loginEmail">Parent Email</label>
+                  <input type="email" id="loginEmail" required />
+                </div>
+                <div class="form-group">
+                  <label for="loginPassword">Password</label>
+                  <input type="password" id="loginPassword" required />
+                </div>
+                <div class="form-group">
+                  <button type="submit">Login</button>
+                </div>
+              </form>
+              <div id="login-message" class="message"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -480,8 +501,10 @@
 
         <button id="logout-btn" class="btn-secondary" style="margin-top:0.75rem;">Logout</button>
       </section>
+    </div>
 
-      <!-- Leaderboards -->
+    <!-- 📊 LEADERBOARD VIEW -->
+    <div id="leaderboard-view" style="display:none;">
       <section id="leaderboard-section">
         <h2>Leaderboards</h2>
         <p style="font-size:0.9rem; color: var(--text-muted);">
@@ -562,7 +585,7 @@
       </section>
     </div>
 
-    <!-- 💚 SPONSOR VIEW: separate tab/page -->
+    <!-- 💚 SPONSOR VIEW -->
     <div id="sponsor-view" style="display:none;">
       <section id="sponsor-section">
         <h2>Sponsor the Fajr 40 Challenge</h2>
@@ -596,7 +619,7 @@
       </section>
     </div>
 
-    <!-- 🔐 ADMIN VIEW: separate page for admins only -->
+    <!-- 🔐 ADMIN VIEW -->
     <div id="admin-view" style="display:none;">
       <section id="admin-section">
         <h2>Admin Dashboard</h2>
@@ -686,11 +709,13 @@
     const adminMessage = document.getElementById("admin-message");
 
     const homeView = document.getElementById("home-view");
+    const leaderboardView = document.getElementById("leaderboard-view");
     const sponsorView = document.getElementById("sponsor-view");
     const adminView = document.getElementById("admin-view");
 
-    const dashboardSection = document.getElementById("dashboard-section");
     const authSection = document.getElementById("auth-section");
+    const authForms = document.getElementById("auth-forms");
+    const dashboardSection = document.getElementById("dashboard-section");
     const adminSection = document.getElementById("admin-section");
     const leaderboardSection = document.getElementById("leaderboard-section");
 
@@ -713,8 +738,12 @@
     const exportCompletionsBtn = document.getElementById("export-completions-btn");
 
     const navHome = document.getElementById("nav-home");
+    const navLeaderboard = document.getElementById("nav-leaderboard");
     const navSponsor = document.getElementById("nav-sponsor");
     const navAdmin = document.getElementById("nav-admin");
+
+    const openRegisterBtn = document.getElementById("open-register-btn");
+    const openLoginBtn = document.getElementById("open-login-btn");
 
     let fullLeaderboardCache = [];
     let currentUser = null;
@@ -732,11 +761,12 @@
     }
 
     function setNavActive(view) {
-      [navHome, navSponsor, navAdmin].forEach(btn => {
+      [navHome, navLeaderboard, navSponsor, navAdmin].forEach(btn => {
         if (!btn) return;
         btn.classList.remove("active");
       });
       if (view === "home" && navHome) navHome.classList.add("active");
+      if (view === "leaderboard" && navLeaderboard) navLeaderboard.classList.add("active");
       if (view === "sponsor" && navSponsor) navSponsor.classList.add("active");
       if (view === "admin" && navAdmin) navAdmin.classList.add("active");
     }
@@ -745,14 +775,14 @@
       const token = localStorage.getItem("token");
       const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-      // Default hide all views
+      // Hide all main views
       homeView.style.display = "none";
+      leaderboardView.style.display = "none";
       sponsorView.style.display = "none";
       adminView.style.display = "none";
 
       if (view === "home") {
         homeView.style.display = "block";
-        // Within home: either show auth or dashboard (plus leaderboard)
         if (token && currentUser) {
           authSection.style.display = "none";
           dashboardSection.style.display = "block";
@@ -760,20 +790,20 @@
           authSection.style.display = "block";
           dashboardSection.style.display = "none";
         }
-        leaderboardSection.style.display = "block";
         if (adminSection) adminSection.style.display = "none";
+      } else if (view === "leaderboard") {
+        leaderboardView.style.display = "block";
       } else if (view === "sponsor") {
         sponsorView.style.display = "block";
-    } else if (view === "admin") {
-  if (!isAdmin) {
-    showView("home");
-    return;
-  }
-  adminView.style.display = "block";
-  adminSection.style.display = "block"; // ✅ THIS WAS MISSING
-}
+      } else if (view === "admin") {
+        if (!isAdmin) {
+          showView("home");
+          return;
+        }
+        adminView.style.display = "block";
+        adminSection.style.display = "block";
+      }
 
-      // Update nav button styling
       setNavActive(view);
     }
 
@@ -787,6 +817,19 @@
 
     logoutBtn.addEventListener("click", () => {
       logout();
+    });
+
+    // Show auth forms when Register or Login buttons are clicked
+    openRegisterBtn.addEventListener("click", () => {
+      authForms.style.display = "block";
+      const first = document.getElementById("parentName");
+      if (first) first.focus();
+    });
+
+    openLoginBtn.addEventListener("click", () => {
+      authForms.style.display = "block";
+      const first = document.getElementById("loginEmail");
+      if (first) first.focus();
     });
 
     // Preview checkin photo
@@ -814,7 +857,6 @@
       const parentName = document.getElementById("parentName").value.trim();
       const childName = document.getElementById("childName").value.trim();
       const email = document.getElementById("email").value.trim();
-
       const city = document.getElementById("city").value.trim();
       const masjid = document.getElementById("masjid").value.trim();
       const age = parseInt(document.getElementById("age").value, 10);
@@ -1265,6 +1307,11 @@
       showView("home");
     });
 
+    navLeaderboard.addEventListener("click", async () => {
+      showView("leaderboard");
+      await loadLeaderboards();
+    });
+
     navSponsor.addEventListener("click", () => {
       showView("sponsor");
     });
@@ -1285,7 +1332,7 @@
       if (token) {
         await loadProfile();
       }
-      await loadLeaderboards();
+      await loadLeaderboards(); // pre-load for leaderboard tab
 
       const path = window.location.pathname;
       const isAdmin = localStorage.getItem("isAdmin") === "true";
@@ -1293,6 +1340,8 @@
       if (path === "/admin" && isAdmin) {
         showView("admin");
         await loadAdminData();
+      } else if (path === "/leaderboard") {
+        showView("leaderboard");
       } else {
         showView("home");
       }
